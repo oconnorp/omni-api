@@ -11,7 +11,7 @@ const client = new DynamoDBClient({});
 
 const dynamo = DynamoDBDocumentClient.from(client);
 
-const tableName = process.env.TABLE_NAME;
+const tableName = process.env.TEAM_TABLE_NAME;
 
 console.log(`Using DynamoDB table: ${tableName}`);
 

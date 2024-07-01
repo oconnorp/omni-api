@@ -27,7 +27,7 @@ export class OmniApiStack extends cdk.Stack {
       code: lambda.Code.fromAsset("lambda"),
       handler: "team.handler",
       environment: {
-        TABLE_NAME: tableNameEnv.value,
+        TEAM_TABLE_NAME: tableNameEnv.value,
       },
     });
 
