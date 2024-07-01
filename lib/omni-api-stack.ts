@@ -15,10 +15,12 @@ export class OmniApiStack extends cdk.Stack {
       },
     });
 
+    console.log(`Generated table name: ${table.tableName}`);
+
     // Create an environment variable with the table name
     const tableNameEnv = new cdk.CfnOutput(this, "TableNameEnv", {
       value: table.tableName,
-      exportName: "TEAM_TABLE_NAME",
+      exportName: "TeamTableName",
     });
 
     // Define the Lambda function resource
