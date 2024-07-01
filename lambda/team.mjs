@@ -25,7 +25,7 @@ export const handler = async (event, context) => {
   };
 
   try {
-    switch (event.routeKey) {
+    switch (`${event.httpMethod} ${event.path}`) {
       case "DELETE /teams/{id}":
         await dynamo.send(
           new DeleteCommand({
