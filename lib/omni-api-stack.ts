@@ -8,18 +8,26 @@ export class OmniApiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const table = new ddb.Table(this, "TeamsTable", {
+      partitionKey: {
+        name: "id",
+        type: ddb.AttributeType.STRING,
+      },
+    });
+
+    // Create an environment variable with the table name
+    const tableNameEnv = new cdk.CfnOutput(this, "TableNameEnv", {
+      value: table.tableName,
+      exportName: "TEAM_TABLE_NAME",
+    });
+
     // Define the Lambda function resource
     const createTeamFunction = new lambda.Function(this, "CreateTeamFunction", {
       runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("lambda"),
       handler: "team.handler",
-    });
-
-    const teamsTbl = new ddb.Table(this, "TeamsTable", {
-      tableName: "teams",
-      partitionKey: {
-        name: "id",
-        type: ddb.AttributeType.STRING,
+      environment: {
+        TABLE_NAME: tableNameEnv.value,
       },
     });
 
