@@ -24,7 +24,7 @@ export class OmniApiStack extends cdk.Stack {
     });
 
     // Define the Lambda function resource
-    const createTeamFunction = new lambda.Function(this, "CreateTeamFunction", {
+    const teamFunction = new lambda.Function(this, "TeamFunction", {
       runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("lambda"),
       handler: "team.handler",
@@ -34,9 +34,11 @@ export class OmniApiStack extends cdk.Stack {
     });
 
     const api = new apigateway.LambdaRestApi(this, "OmniApi", {
-      handler: createTeamFunction,
+      handler: teamFunction,
       proxy: false,
     });
+
+    table.grantReadWriteData(teamFunction);
 
     // Define the '/team' resource with a GET method
     const teamResource = api.root.addResource("teams");
