@@ -39,7 +39,8 @@ export class OmniApiStack extends cdk.Stack {
     });
 
     // Define the '/team' resource with a GET method
-    const teamResource = api.root.addResource("team");
+    const teamResource = api.root.addResource("teams");
     teamResource.addMethod("GET");
+    teamResource.addMethod("POST");
   }
 }
