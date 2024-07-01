@@ -7,6 +7,8 @@ import {
   DeleteCommand,
 } from "@aws-sdk/lib-dynamodb";
 
+import { v7 } from "uuid";
+
 const client = new DynamoDBClient({});
 
 const dynamo = DynamoDBDocumentClient.from(client);
@@ -50,6 +52,17 @@ export const handler = async (event, context) => {
         body = await dynamo.send(new ScanCommand({ TableName: tableName }));
         body = body.Items;
         break;
+      case "POST /teams":
+        let req = JSON.parse(event.body);
+        await dynamo.send(
+          new PutCommand({
+            TableName: tableName,
+            Item: {
+              id: v7(),
+              name: req.name,
+            },
+          })
+        );
       case "PUT /teams":
         let requestJSON = JSON.parse(event.body);
         await dynamo.send(
