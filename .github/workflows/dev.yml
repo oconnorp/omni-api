@@ -33,6 +33,6 @@ jobs:
       - name: Install Node dependencies - lambda
         run: cd lambda && npm install
       - name: Install Node dependencies - root
-        run: cd .. && npm install
+        run: npm install
       - name: Deploy to AWS
         run: cdk deploy
