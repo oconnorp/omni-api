@@ -7,7 +7,7 @@ import {
   DeleteCommand,
 } from "@aws-sdk/lib-dynamodb";
 
-import { v7 as uuidv7 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 
 const client = new DynamoDBClient({});
 
@@ -58,7 +58,7 @@ export const handler = async (event, context) => {
           new PutCommand({
             TableName: tableName,
             Item: {
-              id: uuidv7(),
+              id: uuidv4(),
               name: req.name,
             },
           })
