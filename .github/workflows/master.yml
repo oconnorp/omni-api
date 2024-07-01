@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: cdk diff
-        uses: youyo/aws-cdk-github-actions@v2
+        uses: actions/checkout@v3
         with:
           cdk_subcommand: "diff"
           actions_comment: true
@@ -18,7 +18,7 @@ jobs:
           AWS_DEFAULT_REGION: "us-east-1"
 
       - name: cdk deploy
-        uses: youyo/aws-cdk-github-actions@v2
+        uses: actions/checkout@v3
         with:
           cdk_subcommand: "deploy"
           cdk_stack: "OmniApiStack"
