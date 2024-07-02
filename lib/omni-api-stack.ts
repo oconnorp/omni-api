@@ -28,6 +28,7 @@ export class OmniApiStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_18_X,
       code: lambda.Code.fromAsset("lambda"),
       handler: "team.handler",
+      timeout: cdk.Duration.seconds(10),
       environment: {
         TEAM_TABLE_NAME: tableNameEnv.value,
       },

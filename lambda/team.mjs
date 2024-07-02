@@ -1,90 +1,36 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import {
-  DynamoDBDocumentClient,
-  ScanCommand,
-  PutCommand,
-  GetCommand,
-  DeleteCommand,
-} from "@aws-sdk/lib-dynamodb";
-
+import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { v4 as uuidv4 } from "uuid";
 
 const client = new DynamoDBClient({});
 
-const dynamo = DynamoDBDocumentClient.from(client);
+const ddbDocClient = DynamoDBDocumentClient.from(client); // client is DynamoDB client
 
 const tableName = process.env.TEAM_TABLE_NAME;
 
 console.log(`Using DynamoDB table: ${tableName}`);
 
 export const handler = async (event, context) => {
-  let body;
+  let body = "SUCCESS";
   let statusCode = 200;
   const headers = {
     "Content-Type": "application/json",
   };
 
-  try {
-    switch (`${event.httpMethod} ${event.path}`) {
-      case "DELETE /teams/{id}":
-        await dynamo.send(
-          new DeleteCommand({
-            TableName: tableName,
-            Key: {
-              id: event.pathParameters.id,
-            },
-          })
-        );
-        body = `Deleted team ${event.pathParameters.id}`;
-        break;
-      case "GET /teams/{id}":
-        body = await dynamo.send(
-          new GetCommand({
-            TableName: tableName,
-            Key: {
-              id: event.pathParameters.id,
-            },
-          })
-        );
-        body = body.Item;
-        break;
-      case "GET /teams":
-        body = await dynamo.send(new ScanCommand({ TableName: tableName }));
-        body = body.Items;
-        break;
-      case "POST /teams":
-        let req = JSON.parse(event.body);
-        await dynamo.send(
-          new PutCommand({
-            TableName: tableName,
-            Item: {
-              id: req.id,
-              name: req.name,
-            },
-          })
-        );
-      case "PUT /teams":
-        let requestJSON = JSON.parse(event.body);
-        await dynamo.send(
-          new PutCommand({
-            TableName: tableName,
-            Item: {
-              id: requestJSON.id,
-              name: requestJSON.name,
-            },
-          })
-        );
-        body = `Put team ${requestJSON.id}`;
-        break;
-      default:
-        throw new Error(`Unsupported route: "${event.routeKey}"`);
-    }
-  } catch (err) {
-    statusCode = 400;
-    body = err.message;
-  } finally {
-    body = JSON.stringify(body);
-  }
+  // Add a new team
+  console.log("POST /teams invoked");
+  console.log(`This is the parsed req: ${event.body}`);
+  const req = await JSON.parse(event.body);
+
+  const input = {
+    TableName: tableName,
+    Item: {
+      id: "12345678999999999", //uuidv4(),
+      name: req.name,
+    },
+  };
+  const command = new PutCommand(input);
+  body = await ddbDocClient.send(command);
 
   return {
     statusCode,
