@@ -58,7 +58,7 @@ export const handler = async (event, context) => {
           new PutCommand({
             TableName: tableName,
             Item: {
-              id: uuidv4(),
+              id: req.id,
               name: req.name,
             },
           })
