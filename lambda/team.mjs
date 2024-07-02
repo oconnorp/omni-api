@@ -25,7 +25,7 @@ export const handler = async (event, context) => {
   const input = {
     TableName: tableName,
     Item: {
-      id: "12345678999999999", //uuidv4(),
+      id: uuidv4(),
       name: req.name,
     },
   };
