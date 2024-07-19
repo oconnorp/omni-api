@@ -37,13 +37,16 @@ export class OmniApiStack extends cdk.Stack {
     const api = new apigateway.LambdaRestApi(this, "OmniApi", {
       handler: teamFunction,
       proxy: false,
+      restApiName: "Omni API",
     });
 
     table.grantReadWriteData(teamFunction);
 
     // Define the '/team' resource with a GET method
-    const teamResource = api.root.addResource("teams");
-    teamResource.addMethod("GET");
-    teamResource.addMethod("POST");
+    const teams = api.root.addResource("teams");
+    teams.addMethod("POST");
+
+    const teamById = teams.addResource("{id}");
+    teamById.addMethod("GET");
   }
 }

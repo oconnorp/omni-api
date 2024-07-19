@@ -1,7 +1,7 @@
 {
   "body": "{\"name\": \"abc\"}",
-  "resource": "/{proxy+}",
-  "path": "/teams",
+  "resource": "/teams/{id}",
+  "path": "/teams/2bdbcf16-8b11-4783-b7e8-62955ef00a61",
   "httpMethod": "GET",
   "isBase64Encoded": true,
   "queryStringParameters": {
@@ -11,7 +11,7 @@
     "foo": ["bar"]
   },
   "pathParameters": {
-    "proxy": "/path/to/resource"
+    "id": "2bdbcf16-8b11-4783-b7e8-62955ef00a61"
   },
   "stageVariables": {
     "baz": "qux"
