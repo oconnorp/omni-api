@@ -3,6 +3,7 @@ import { Construct } from "constructs";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as ddb from "aws-cdk-lib/aws-dynamodb";
+import { ServicePrincipal } from "aws-cdk-lib/aws-iam";
 
 export class OmniApiStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -34,19 +35,43 @@ export class OmniApiStack extends cdk.Stack {
       },
     });
 
+    // IMPORTANT: Lambda grant invoke to APIGateway
+    teamFunction.grantInvoke(new ServicePrincipal("apigateway.amazonaws.com"));
+
     const api = new apigateway.LambdaRestApi(this, "OmniApi", {
       handler: teamFunction,
       proxy: false,
       restApiName: "Omni API",
+      apiKeySourceType: apigateway.ApiKeySourceType.HEADER,
     });
 
-    table.grantReadWriteData(teamFunction);
+    const plan = api.addUsagePlan("UsagePlan", {
+      name: "omni-usage-plan",
+      throttle: {
+        rateLimit: 10,
+        burstLimit: 2,
+      },
+      quota: {
+        limit: 10000,
+        period: apigateway.Period.MONTH,
+      },
+    });
 
-    // Define the '/team' resource with a GET method
-    const teams = api.root.addResource("teams");
+    const key = api.addApiKey("ApiKey");
+    plan.addApiKey(key);
+    plan.addApiStage({ api: api, stage: api.deploymentStage });
+
+    // Define the '/teams' resource with a GET method
+    const teams = api.root.addResource("teams", {
+      defaultMethodOptions: {
+        apiKeyRequired: true,
+      },
+    });
     teams.addMethod("POST");
 
     const teamById = teams.addResource("{id}");
     teamById.addMethod("GET");
+
+    table.grantReadWriteData(teamFunction);
   }
 }
