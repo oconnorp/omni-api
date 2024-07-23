@@ -29,6 +29,9 @@ export const handler = async (event, context) => {
   let statusCode = 200;
   const headers = {
     "Content-Type": "application/json",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
   };
 
   const req = await JSON.parse(event.body);
